@@ -1,8 +1,5 @@
 const jwt = require('jsonwebtoken');
 
-const jwtKey =
-  process.env.JWT_SECRET ||
-  'Secrets are not meant to be shared, so keep em!';
 
 // quickly see what this file exports
 module.exports = {
@@ -26,4 +23,4 @@ function authenticate(req, res, next) {
       error: 'No token provided, must be set on the Authorization Header',
     });
   }
-}
+};

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 //
 
 const db = require('../users/users-model');
-const generateToken = require('./token-gen');
+const jwtKey = require('./secrets');
 
 //
 
@@ -26,6 +26,7 @@ function register(req, res) {
   db.add(user)
     .then(saved => {
       const token = generateToken(saved);
+      console.log(saved);
       res.status(201).json({ message: `Welcome ${saved.username}!`, token })
     })
     .catch( err => {
@@ -42,6 +43,7 @@ function login(req, res) {
     .then( user => {
       if(user && bcrypt.compareSync(password, user.password)) {
         const token = generateToken(user);
+        // console.log(user);
 
         res.status(200).json({ message: `Welcome back ${user.username}!, I have a token`, token })
       } else {
@@ -66,4 +68,15 @@ function getJokes(req, res) {
     .catch(err => {
       res.status(500).json({ message: 'Error Fetching Jokes', error: err });
     });
-}
+};
+
+function generateToken(user){
+  const payload = {
+    subject: user.id,
+    username: user.username
+  };
+  const options = {
+    expiresIn: '1d'
+  };
+  return jwt.sign(payload, jwtKey, options)
+};
