@@ -5,6 +5,9 @@ const jwt = require('jsonwebtoken');
 //
 
 const db = require('../users/users-model');
+const generateToken = require('./token-gen');
+
+//
 
 const { authenticate } = require('../auth/authenticate');
 
@@ -16,6 +19,15 @@ module.exports = server => {
 
 function register(req, res) {
   // implement user registration
+  let user = req.body;
+  const hash = bcrypt.hashSync(user.password, 10);
+  user.password = hash;
+
+  db.add(user)
+    .then(saved => {
+      const token = generateToken(saved);
+
+    })
 }
 
 function login(req, res) {
